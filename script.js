@@ -27,7 +27,7 @@ async function getBooks() {
     const cartList = document.getElementById("cartList");
 
     books.forEach(function (book) {
-      bookList.innerHTML += `<div class="col-md-3 mb-4 book-card"><img class="card-img-top" src="${book.img}" alt="${book.title}" style="height: 500px;"><div class="card-body d-flex flex-column"><h5 class="card-title text-dark">${book.title}</h5><p class="card-text text-dark">Price: $${book.price}</p><div class="mt-auto"><button class="btn btn-danger discard-button" style="height: 38px;">Scarta</button><button class="btn btn-primary add-to-cart-button float-end">Compra ora</button></div></div></div>`;
+      bookList.innerHTML += `<div class="col-md-3 mb-4 book-card"><img class="card-img-top" src="${book.img}" alt="${book.title}" style="height: 500px;"><div class="card-body d-flex flex-column"><h5 style="height: 50px;" class="card-title text-dark">${book.title}</h5><p class="card-text text-dark">Price: $${book.price}</p><div class="mt-auto"><button class="btn btn-danger discard-button" style="height: 38px;">Scarta</button><button class="btn btn-primary add-to-cart-button float-end">Compra ora</button></div></div></div>`;
     });
     const bookCards = bookList.querySelectorAll(".book-card");
 
@@ -69,7 +69,7 @@ async function getBooks() {
 }
 
 function saveCartToLocalStorage() {
-  const cartItems = document.querySelectorAll("#cartList li");
+  const cartItems = document.querySelectorAll("#cartList li span");
   const cartBooks = [];
 
   cartItems.forEach((item) => {
@@ -87,7 +87,7 @@ function loadCartFromLocalStorage() {
     const cartList = document.getElementById("cartList");
 
     cartBooks.forEach((bookTitle) => {
-      const cartItem = createCartItem({ title: bookTitle });
+      const cartItem = createCartItem(bookTitle);
       cartList.appendChild(cartItem);
 
       const removeFromCartButton = cartItem.querySelector(".remove-from-cart-button");
