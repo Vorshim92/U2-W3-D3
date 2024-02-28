@@ -1,3 +1,5 @@
+const storageCart = "cart";
+
 function createCartItem(bookTitle) {
   const listItem = document.createElement("li");
   listItem.className = "list-group-item d-flex justify-content-between align-items-center";
@@ -8,6 +10,11 @@ function createCartItem(bookTitle) {
   const removeButton = document.createElement("button");
   removeButton.className = "btn btn-danger remove-from-cart-button";
   removeButton.textContent = "Rimuovi";
+
+  removeButton.addEventListener("click", () => {
+    listItem.remove();
+    saveCartToLocalStorage();
+  });
 
   listItem.appendChild(title);
   listItem.appendChild(removeButton);
@@ -27,40 +34,23 @@ async function getBooks() {
     const cartList = document.getElementById("cartList");
 
     books.forEach(function (book) {
-      bookList.innerHTML += `<div class="col-md-3 mb-4 book-card"><img class="card-img-top" src="${book.img}" alt="${book.title}" style="height: 500px;"><div class="card-body d-flex flex-column"><h5 style="height: 50px;" class="card-title text-dark">${book.title}</h5><p class="card-text text-dark">Price: $${book.price}</p><div class="mt-auto"><button class="btn btn-danger discard-button" style="height: 38px;">Scarta</button><button class="btn btn-primary add-to-cart-button float-end">Compra ora</button></div></div></div>`;
+      bookList.innerHTML += `<div class="col-md-3 mb-4 book-card"><img class="card-img-top" src="${book.img}" alt="${book.title}" style="height: 500px; object-fit: cover;"><div class="card-body d-flex flex-column"><h5 style="height: 50px;" class="card-title text-dark">${book.title}</h5><p style="padding-top: 25px; class="card-text text-dark">Price: $${book.price}</p><div class="mt-auto"><button class="btn btn-danger discard-button" style="height: 38px;">Scarta</button><button class="btn btn-primary add-to-cart-button float-end">Compra ora</button></div></div></div>`;
     });
     const bookCards = bookList.querySelectorAll(".book-card");
 
     bookCards.forEach(function (bookCard) {
+      // PULSANTE AGGIUNTA AL CARRELLO
       const addToCartButton = bookCard.querySelector(".add-to-cart-button");
       addToCartButton.addEventListener("click", () => {
         const cartItem = createCartItem(bookCard.querySelector("h5").innerText);
         cartList.appendChild(cartItem);
         saveCartToLocalStorage();
-
-        const removeFromCartButton = cartItem.querySelector(".remove-from-cart-button");
-        removeFromCartButton.addEventListener("click", () => {
-          cartItem.remove();
-          saveCartToLocalStorage();
-        });
       });
 
+      // PULSANTE RIMUOVI CARD
       const discardButton = bookCard.querySelector(".discard-button");
       discardButton.addEventListener("click", () => {
         bookCard.parentNode.removeChild(bookCard);
-      });
-
-      const listItem = createCartItem(bookCard.querySelector("h5").innerText);
-
-      const discardButtons = document.querySelectorAll(".discard-button");
-      let maxHeight = 0;
-
-      discardButtons.forEach((button) => {
-        maxHeight = Math.max(maxHeight, button.offsetHeight);
-      });
-
-      discardButtons.forEach((button) => {
-        button.style.height = `${maxHeight}px`;
       });
     });
   } catch (error) {
@@ -76,25 +66,19 @@ function saveCartToLocalStorage() {
     cartBooks.push(item.textContent);
   });
 
-  localStorage.setItem("cart", JSON.stringify(cartBooks));
+  localStorage.setItem(storageCart, JSON.stringify(cartBooks));
 }
 
 function loadCartFromLocalStorage() {
-  const cart = localStorage.getItem("cart");
+  const cart = localStorage.getItem(storageCart);
 
   if (cart) {
     const cartBooks = JSON.parse(cart);
     const cartList = document.getElementById("cartList");
 
-    cartBooks.forEach((bookTitle) => {
-      const cartItem = createCartItem(bookTitle);
+    cartBooks.forEach((cartBook) => {
+      const cartItem = createCartItem(cartBook);
       cartList.appendChild(cartItem);
-
-      const removeFromCartButton = cartItem.querySelector(".remove-from-cart-button");
-      removeFromCartButton.addEventListener("click", () => {
-        cartItem.remove();
-        saveCartToLocalStorage();
-      });
     });
   }
 }
